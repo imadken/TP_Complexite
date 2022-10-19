@@ -22,19 +22,21 @@ int main(){
 // srand(time(0));
 
 
-FILE *f1=fopen("10-4.txt","r");
-FILE *f2=fopen("10-4_inv.txt","r");
-FILE *f3=fopen("10-4_rand.txt","r");
-
-
-printf("\n fichier triee de taille 10^4 \n\n-------------------------------------\n\n");
-complexite(f1,10000);
-
-printf("\n fichier inversee de taille 10^4 \n\n-------------------------------------\n\n");
-complexite(f2,10000);
+// FILE *f1=fopen("10-4.txt","r");
+// FILE *f2=fopen("10-4_inv.txt","r");
+// FILE *f3=fopen("10-4_rand.txt","r");
+FILE *f1=fopen("10-4_rand.txt","r");
+FILE *f2=fopen("10-5_rand.txt","r");
+FILE *f3=fopen("10-6_rand.txt","r");
 
 printf("\n fichier random de taille 10^4 \n\n-------------------------------------\n\n");
-complexite(f3,10000);
+complexite(f1,10000);
+
+printf("\n fichier random de taille 10^5 \n\n-------------------------------------\n\n");
+complexite(f2,100000);
+
+printf("\n fichier random de taille 10^6 \n\n-------------------------------------\n\n");
+complexite(f3,1000000);
 
 
 
@@ -48,11 +50,12 @@ fclose(f3);
 void load_data(FILE *f,int tab [],int size){
     char x [10];
     int i=0;
-while (  fscanf(f, "%[^\n] ", x)!= EOF) {
+while (  (fscanf(f, "%[^\n] ", x)!= EOF) && (i<size) ) {
     
     tab[i]=atoi(x);
     i++;
     }
+
 }
 
 void print_array(int tab [],int size){
@@ -69,7 +72,7 @@ void swap(int* xp, int* yp)
 
 // tri par selection
 
-void selectionSort(int arr[], int n)
+void selectionSort(int arr[], int n) //complexity == O(n**n)
 {
     int i, j, min_idx;
  
@@ -90,7 +93,7 @@ void selectionSort(int arr[], int n)
 
 // tri par insertion
 
-void insertionSort(int arr[], int n)
+void insertionSort(int arr[], int n)//complexity == O(n**n)
 {
     int i, key, j;
     for (i = 1; i < n; i++) {
@@ -141,7 +144,8 @@ int partition(int array[], int low, int high) {
   return (i + 1);
 }
 
-void quickSort(int array[], int low, int high) {
+void quickSort(int array[], int low, int high) //complexity == O(n**n)
+{
   if (low < high) {
     
     // find the pivot element such that
@@ -160,7 +164,7 @@ void quickSort(int array[], int low, int high) {
 
 
 // tri a bulle
-void bubbleSort(int arr[], int n)
+void bubbleSort(int arr[], int n) //complexity == O(n**n)
 {
     int i, j;
     for (i = 0; i < n - 1; i++)
@@ -182,7 +186,8 @@ void merge(int arr[], int p, int q, int r) {
   int n1 = q - p + 1;
   int n2 = r - q;
 
-  int L[n1], M[n2];
+  int *L=malloc(sizeof(int)*n1);
+  int *M=malloc(sizeof(int)*n2);
 
   for (int i = 0; i < n1; i++)
     L[i] = arr[p + i];
@@ -224,7 +229,9 @@ void merge(int arr[], int p, int q, int r) {
 }
 
 // Divide the array into two subarrays, sort them and merge them
-void mergeSort(int arr[], int l, int r) {
+
+void mergeSort(int arr[], int l, int r)//algo recursive ,complexity == T(n) =2T(n/2) +O(n)
+ {
   if (l < r) {
 
     // m is the point where the array is divided into two subarrays
@@ -276,7 +283,7 @@ void heapify(int arr[], int N, int i)
 }
  
 // Main function to do heap sort
-void heapSort(int arr[], int N)
+void heapSort(int arr[], int N)//complexity == O(nlog(n))
 {
  
     // Build max heap
@@ -303,7 +310,7 @@ void heapSort(int arr[], int N)
 
 void complexite(FILE *f,int size){
 
-  int tab1[size];
+  int *tab1=malloc(sizeof(int)*size);
 
 clock_t t1,t2;
 
@@ -323,42 +330,16 @@ rewind(f);
 
 
 t1=clock();
-selectionSort(tab1,size);
+heapSort(tab1,size);
 t2=clock();
 delta = (t2-t1)/CLOCKS_PER_SEC;
 
-printf("trie par selection : %f \n",delta);
+printf("tri par tas : %f \n",delta);
 printf("------------------------------------------\n\n");
 
 load_data(f,tab1,size);
 
 
-rewind(f);
-
-
-t1=clock();
-insertionSort(tab1,size);
-t2=clock();
-delta = (t2-t1)/CLOCKS_PER_SEC;
-
-printf("trie par inserion : %f \n",delta);
-printf("------------------------------------------\n\n");
-
-load_data(f,tab1,size);
-
-
-rewind(f);
-
-
-t1=clock();
-bubbleSort(tab1,size);
-t2=clock();
-delta = (t2-t1)/CLOCKS_PER_SEC;
-
-printf("trie a bulle : %f \n",delta);
-printf("------------------------------------------\n\n");
-
-load_data(f,tab1,size);
 rewind(f);
 
 
@@ -367,7 +348,7 @@ quickSort(tab1,0,size-1);
 t2=clock();
 delta = (t2-t1)/CLOCKS_PER_SEC;
 
-printf("trie rapide : %f \n",delta);
+printf("tri rapide : %f \n",delta);
 printf("------------------------------------------\n\n");
 
 load_data(f,tab1,size);
@@ -381,21 +362,44 @@ mergeSort(tab1,0,size-1);
 t2=clock();
 delta = (t2-t1)/CLOCKS_PER_SEC;
 
-printf("trie par fusion : %f \n",delta);
+printf("tri par fusion : %f \n",delta);
+printf("------------------------------------------\n\n");
+
+load_data(f,tab1,size);
+rewind(f);
+
+
+t1=clock();
+insertionSort(tab1,size);
+t2=clock();
+delta = (t2-t1)/CLOCKS_PER_SEC;
+
+printf("tri par insertion : %f \n",delta);
 printf("------------------------------------------\n\n");
 
 load_data(f,tab1,size);
 
 
-
+rewind(f);
 
 
 t1=clock();
-heapSort(tab1,size);
+selectionSort(tab1,size);
 t2=clock();
 delta = (t2-t1)/CLOCKS_PER_SEC;
 
-printf("trie par tas : %f \n",delta);
+printf("tri par selection : %f \n",delta);
+printf("------------------------------------------\n\n");
+
+load_data(f,tab1,size);
+
+
+t1=clock();
+bubbleSort(tab1,size);
+t2=clock();
+delta = (t2-t1)/CLOCKS_PER_SEC;
+
+printf("tri a bulle : %f \n",delta);
 printf("------------------------------------------\n\n");
 
 
