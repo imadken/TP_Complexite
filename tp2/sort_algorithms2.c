@@ -226,6 +226,8 @@ void merge(int arr[], int p, int q, int r) {
     j++;
     k++;
   }
+
+  free(L);free(M);
 }
 
 // Divide the array into two subarrays, sort them and merge them
@@ -402,6 +404,7 @@ delta = (t2-t1)/CLOCKS_PER_SEC;
 printf("tri a bulle : %f \n",delta);
 printf("------------------------------------------\n\n");
 
+free (tab1);
 
 }
 
